@@ -1,4 +1,0 @@
-Hello, guys.
-This my first GitHub.
-I'm happy that I can use Git and GitHub.
-So I marked it.
