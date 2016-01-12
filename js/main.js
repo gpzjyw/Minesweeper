@@ -1,6 +1,5 @@
-initialEvents();
-
-function initialEvents(){
+//添加初始事件
+(function(){
 	addEvent($_id("low"), "click", function(){
 		createMinesMap(9, 9);
 	});
@@ -10,7 +9,7 @@ function initialEvents(){
 	addEvent($_id("high"), "click", function(){
 		createMinesMap(16, 30);
 	});
-}
+})();
 
 function createMinesMap(rowLength, columnLength){
 	//移除table标签下的所有子节点
@@ -18,7 +17,7 @@ function createMinesMap(rowLength, columnLength){
 	for(var i=childs.length-1;i>=0;i--){
 		$_id("table").removeChild(childs.item(i));
 	}
-	//增加table标签下的节点
+	//根据rowLength和columnLength增加table标签下的节点
 	for(i=0; i<rowLength; i++){
 		var tr = document.createElement("tr");
 		tr.className = "row"+i;
@@ -31,37 +30,26 @@ function createMinesMap(rowLength, columnLength){
 		}
 		$_id("table").appendChild(tr);
 	}
-	//
+	//生成mineArray，有雷概率为80%；生成不含数据的mineAround
 	var mineArray = [];
 	var mineAround = [];
+	var mineNum = 0;
 	for(var i=0; i<rowLength; i++){
 		mineArray.push([]);
 		mineAround.push([]);
 		for(var j=0; j<columnLength; j++){
-			if(Math.random()<0.8){
+			if(Math.random()<=0.9){
 				mineArray[i].push(0);
 			}else{
-				mineArray[i].push(1);				
+				mineArray[i].push(1);
+				mineNum += 1;
 			}
 		}
 	}
+	$_id("j-minenum").innerHTML = mineNum;
 	mainFunction(rowLength, columnLength, mineArray, mineAround);
 }
-
-//var mineArray = [[1,0,0,0,0,0,0,0,0,1,0,0,0,0],
-//				 [0,1,0,0,0,0,0,0,0,0,1,0,0,0],
-//				 [0,0,1,0,0,0,0,0,0,0,0,1,0,0],
-//				 [0,0,0,1,0,0,0,0,0,0,0,0,1,0],
-//				 [0,0,0,0,1,0,0,0,0,0,0,0,0,1],
-//				 [0,0,0,0,0,1,0,0,0,0,0,0,1,0],
-//				 [0,0,0,0,0,0,1,0,0,0,0,1,0,0],
-//				 [0,0,0,0,0,0,0,1,0,0,1,0,0,0],
-//				 [0,0,0,0,0,0,0,0,1,1,0,0,0,0]];
-//var mineAround =[[],[],[],[],[],[],[],[],[]];
-//var rowLength = mineArray.length;
-//var columnLength = mineArray[0].length;
-
-//根据mineArray，mineAround生成扫雷的主要程序
+//根据rowLength，columnLength，mineArray，mineAround生成扫雷的主要程序
 function mainFunction(rowLength, columnLength, mineArray, mineAround){
 	//确认一个方块周围8（或3或5）个方块雷的数目，并存入mineAround中
 	for(var i=0; i<rowLength; i++){
@@ -101,15 +89,19 @@ function mainFunction(rowLength, columnLength, mineArray, mineAround){
 			var column = row.getElementsByClassName("column"+j)[0];
 			var btn = column.getElementsByTagName("button")[0];
 			if(mineArray[i][j]==1){
-				addEvent(btn, "click", function(){
-					alert("This is a mine");
-				});
+				addEvent(btn, "mousedown", (function(x, y){
+					return function(event){
+						if(event.button==2){
+							showMineAround(x, y);
+						}
+					}
+				})(i, j));
 			}else{
-				addEvent(btn, "click", function(x, y){
+				addEvent(btn, "click", (function(x, y){
 					return function(){
-						sweepMine(x, y);	
+						sweepMine(x, y);
 					};
-				}(i, j));
+				})(i, j));
 			}
 		}
 	}
@@ -118,79 +110,34 @@ function mainFunction(rowLength, columnLength, mineArray, mineAround){
 		if(mineAround[i][j]==0){
 			showMineAround(i, j);
 			//左上方	↖
-			if((i-1)>=0 && (j-1)>=0){
-				if(isSweeped(i-1, j-1)==false){
-					showMineAround(i-1, j-1);
-					if(mineAround[i-1][j-1]==0){
-						sweepMine(i-1, j-1);
-					}
-				}
-			}
+			sweepMineAction(i-1, j-1);
 			//正上方	↑
-			if((i-1)>=0){
-				if(isSweeped(i-1, j)==false){
-					showMineAround(i-1, j);
-					if(mineAround[i-1][j]==0){
-						sweepMine(i-1, j);
-					}
-				}
-			}
+			sweepMineAction(i-1, j);
 			//右上方	↗
-			if((i-1)>=0 && (j+1)<columnLength){
-				if(isSweeped(i-1, j+1)==false){
-					showMineAround(i-1, j+1);
-					if(mineAround[i-1][j+1]==0){
-						sweepMine(i-1, j+1);
-					}
-				}
-			}
+			sweepMineAction(i-1, j+1);
 			//正左方	←
-			if((j-1)>=0){
-				if(isSweeped(i, j-1)==false){
-					showMineAround(i, j-1);
-					if(mineAround[i][j-1]==0){
-						sweepMine(i, j-1);
-					}
-				}
-			}
+			sweepMineAction(i, j-1);
 			//正右方	→
-			if((j+1)<columnLength){
-				if(isSweeped(i, j+1)==false){
-					showMineAround(i, j+1);
-					if(mineAround[i][j+1]==0){
-						sweepMine(i, j+1);
-					}
-				}
-			}
+			sweepMineAction(i, j+1);
 			//左下方	↙
-			if((i+1)<rowLength && (j-1)>=0){
-				if(isSweeped(i+1, j-1)==false){
-					showMineAround(i+1, j-1);
-					if(mineAround[i+1][j-1]==0){
-						sweepMine(i+1, j-1);
-					}
-				}
-			}
+			sweepMineAction(i+1, j-1);
 			//正下方	↓
-			if((i+1)<rowLength){
-				if(isSweeped(i+1, j)==false){
-					showMineAround(i+1, j);
-					if(mineAround[i+1][j]==0){
-						sweepMine(i+1, j);
-					}
-				}
-			}
+			sweepMineAction(i+1, j);
 			//右下方	↘
-			if((i+1)<rowLength && (j+1)<columnLength){
-				if(isSweeped(i+1, j+1)==false){
-					showMineAround(i+1, j+1);
-					if(mineAround[i+1][j+1]==0){
-						sweepMine(i+1, j+1);
-					}
-				}
-			}
+			sweepMineAction(i+1, j+1);
 		}else{
 			showMineAround(i, j);
+		}
+	}
+	//先判断第i行j列是否存在，若存在，判断是否已经扫过，若没有被扫，则执行扫雷程序，递归调用函数sweepMine
+	function sweepMineAction(i, j){
+		if(i>=0 && i<rowLength && j>=0 && j<columnLength){
+			if(isSweeped(i, j)==false){
+				showMineAround(i, j);
+				if(mineAround[i][j]==0){
+					sweepMine(i, j);
+				}
+			}
 		}
 	}
 	//显示第i行第j列的方块的mineAround
@@ -200,6 +147,10 @@ function mainFunction(rowLength, columnLength, mineArray, mineAround){
 		var btn = column.getElementsByTagName("button")[0];
 		if(mineArray[i][j]==0){
 			btn.innerHTML = mineAround[i][j];
+			btn.className = "j-sweeped";
+		}else{
+			btn.innerHTML = "*";
+			btn.className = "j-mines"
 		}
 	}
 	//根据button中是否有内容判断某无雷方块是否已被扫过，若已被扫过，返回ture，否则，返回false

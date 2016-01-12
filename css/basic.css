@@ -1,17 +1,15 @@
-#container{
-	margin: auto;
+.j-sweeped{
+	background-color: #FFFFFF;	
 }
-form{
-	
-}
-table{
-	
+.j-mines{
+	background-color: #FF0000;
 }
 button{
-	width: 25px;
-	height: 25px;
+	width: 30px;
+	height: 30px;
 	border: 0px;
+	margin: 0px;
 }
-button: hover{
-	background-color: gray;
+button:hover{
+	background-color: #808080;	
 }
