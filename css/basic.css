@@ -1,9 +1,3 @@
-.j-sweeped{
-	background-color: #FFFFFF;	
-}
-.j-mines{
-	background-color: #FF0000;
-}
 button{
 	width: 30px;
 	height: 30px;
@@ -13,3 +7,30 @@ button{
 button:hover{
 	background-color: #808080;	
 }
+
+.g-container{
+	margin: 50px auto auto auto;
+	width: 1000px;
+}
+/* 设置m-form部分的css属性 */
+.g-container .m-form{
+	font: normal 20px/20px "微软雅黑";
+}
+.g-container .m-form .u-selection{
+	margin-right: 20px;
+}
+.g-container .m-form #j-minenum{
+	font: bold 30px/30px "微软雅黑";
+	color: #FF4500;
+}
+
+
+
+
+.j-sweeped{
+	background-color: #FFFFFF;	
+}
+.j-flag{
+	background-color: #FF4500;
+}
+
