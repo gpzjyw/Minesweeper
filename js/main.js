@@ -1,17 +1,17 @@
 //添加初始事件
 (function(){
 	addEvent($_id("f-low"), "click", function(){
-		createMinesMap(9, 9);
+		createMinesMap(9, 9, 10);
 	});
 	addEvent($_id("f-middle"), "click", function(){
-		createMinesMap(16, 16);
+		createMinesMap(16, 16, 40);
 	});
 	addEvent($_id("f-high"), "click", function(){
-		createMinesMap(16, 30);
+		createMinesMap(16, 30, 99);
 	});
 })();
 
-function createMinesMap(rowLength, columnLength){
+function createMinesMap(rowLength, columnLength, mineNum){
 	//移除table标签下的所有子节点
 	var childs = $_id("m-table").childNodes;
 	for(var i=childs.length-1;i>=0;i--){
@@ -23,38 +23,77 @@ function createMinesMap(rowLength, columnLength){
 		tr.className = "row"+i;
 		for(j=0; j<columnLength; j++){
 			var td = document.createElement("td")
+			var pElement = document.createElement("p");
 			td.className = "column"+j;
-			var buttonNode = document.createElement("button");
-			td.appendChild(buttonNode);
+			addEvent(pElement, "click", (function(rowLength, columnLength, mineNum, initRow, initColumn, pElement){
+				return function(){
+					initializeMine(rowLength, columnLength, mineNum, initRow, initColumn);
+				};
+			})(rowLength, columnLength, mineNum, i, j, pElement));
+			td.appendChild(pElement);
 			tr.appendChild(td);
 		}
 		$_id("m-table").appendChild(tr);
 	}
+	$_id("j-minenum").innerHTML=mineNum;
+}
+
+function initializeMine(rowLength, columnLength, mineNum, initRow, initColumn){
+	//移除table标签下的所有子节点
+	var childs = $_id("m-table").childNodes;
+	for(var i=childs.length-1;i>=0;i--){
+		$_id("m-table").removeChild(childs.item(i));
+	}
+	//根据rowLength和columnLength增加table标签下的节点
+	for(i=0; i<rowLength; i++){
+		var tr = document.createElement("tr");
+		tr.className = "row"+i;
+		for(j=0; j<columnLength; j++){
+			var td = document.createElement("td")
+			var pElement = document.createElement("p");
+			td.className = "column"+j;
+			td.appendChild(pElement);
+			tr.appendChild(td);
+		}
+		$_id("m-table").appendChild(tr);
+	}
+	$_id("j-minenum").innerHTML=mineNum;
 	/* 
 	 * mineArray，表示是否有雷，有雷概率为10%；
 	 * mineAround，表示方块周围8（或3或5）个方块中有雷方块的数目；
 	 * flagMarked，表示是否被标记：初始为0，表示未被标记；为1，表示被标记为雷；为2，表示已经被扫过，即不是雷；
-	 * minNum，表示雷的数目；
+	 * randomMine，根据雷的总数，生成雷的分布；
 	 */
-	var mineArray = [];
-	var mineAround = [];
-	var flagMarked = [];
-	var mineNum = 0;
+	var mineArray = [],
+		mineAround = [],
+		flagMarked = [];
+	var randomMine = function(){
+		var randomRow=Math.floor(rowLength*Math.random());
+		var randomColumn=Math.floor(columnLength*Math.random());
+		if(randomRow>=initRow-1 && randomRow<=initRow+1 && randomColumn>=initColumn-1 && randomColumn<=initColumn-1){
+			arguments.callee();
+		}else{
+			if(mineArray[randomRow][randomColumn]==0){
+				mineArray[randomRow][randomColumn]=1;
+			}else{
+				arguments.callee();
+			}
+		}
+	}
+	
 	for(var i=0; i<rowLength; i++){
 		mineArray.push([]);
 		mineAround.push([]);
 		flagMarked.push([]);
 		for(var j=0; j<columnLength; j++){
 			flagMarked[i].push(0);
-			if(Math.random()<=0.9){
-				mineArray[i].push(0);
-			}else{
-				mineArray[i].push(1);
-				mineNum += 1;
-			}
+			mineArray[i].push(0);
 		}
 	}
-	$_id("j-minenum").innerHTML = mineNum;
+	//根据雷的总数生成雷的分布
+	for(var i=0; i<mineNum; i++){
+		randomMine();
+	}
 	//确认一个方块周围8（或3或5）个方块雷的数目，并存入mineAround中
 	for(var i=0; i<rowLength; i++){
 		for(var j=0; j<columnLength; j++){
@@ -96,9 +135,9 @@ function mainFunction(rowLength, columnLength, mineArray, mineAround, flagMarked
 		for(var j=0; j<columnLength; j++){
 			var row = document.getElementsByClassName("row"+i)[0];
 			var column = row.getElementsByClassName("column"+j)[0];
-			var btn = column.getElementsByTagName("button")[0];
+			var p = column.getElementsByTagName("p")[0];
 			
-			addEvent(btn, "mouseup", (function(x, y){
+			addEvent(p, "mouseup", (function(x, y){
 				return function(event){
 					switch (event.button){
 						//左键触发事件
@@ -164,24 +203,24 @@ function mainFunction(rowLength, columnLength, mineArray, mineAround, flagMarked
 	function showMineAround(i, j){
 		var row = document.getElementsByClassName("row"+i)[0];
 		var column = row.getElementsByClassName("column"+j)[0];
-		var btn = column.getElementsByTagName("button")[0];
+		var p = column.getElementsByTagName("p")[0];
 		
 		flagMarked[i][j] = 2;
-		btn.innerHTML = mineAround[i][j];
-		btn.className = "j-sweeped";
+		p.innerHTML = mineAround[i][j];
+		p.className = "j-sweeped";
 	}
 	//将第i行j列设置为被标记，若已被标记，则取消标记
 	function showFlagMarked(i, j){
 		var row = document.getElementsByClassName("row"+i)[0];
 		var column = row.getElementsByClassName("column"+j)[0];
-		var btn = column.getElementsByTagName("button")[0];
+		var p = column.getElementsByTagName("p")[0];
 		
 		if(flagMarked[i][j]==0){
 			flagMarked[i][j] = 1;
-			btn.className = "j-flag"
+			p.className = "j-flag"
 		} else if(flagMarked[i][j]==1){
 			flagMarked[i][j] = 0;
-			btn.className = "";
+			p.className = "";
 		}
 	}
 }

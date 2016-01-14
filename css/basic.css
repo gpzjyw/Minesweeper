@@ -1,10 +1,11 @@
-button{
+p{
 	width: 30px;
 	height: 30px;
-	border: 0px;
-	margin: 0px;
+	font: normal 15px/30px arial;
+	background: #D3D3D3;
+	text-align: center;
 }
-button:hover{
+p:hover{
 	background-color: #808080;	
 }
 
