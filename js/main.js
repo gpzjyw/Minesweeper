@@ -25,20 +25,17 @@ function createMinesMap(rowLength, columnLength, mineNum){
 			var td = document.createElement("td")
 			var pElement = document.createElement("p");
 			td.className = "column"+j;
-			addEvent(pElement, "click", (function(rowLength, columnLength, mineNum, initRow, initColumn, pElement){
-				return function(){
-					initializeMine(rowLength, columnLength, mineNum, initRow, initColumn);
-				};
-			})(rowLength, columnLength, mineNum, i, j, pElement));
 			td.appendChild(pElement);
 			tr.appendChild(td);
 		}
 		$_id("m-table").appendChild(tr);
 	}
 	$_id("j-minenum").innerHTML=mineNum;
+	
+	initializeMine(rowLength, columnLength, mineNum);
 }
 
-function initializeMine(rowLength, columnLength, mineNum, initRow, initColumn){
+function initializeMine(rowLength, columnLength, mineNum){
 	//移除table标签下的所有子节点
 	var childs = $_id("m-table").childNodes;
 	for(var i=childs.length-1;i>=0;i--){
@@ -49,8 +46,9 @@ function initializeMine(rowLength, columnLength, mineNum, initRow, initColumn){
 		var tr = document.createElement("tr");
 		tr.className = "row"+i;
 		for(j=0; j<columnLength; j++){
-			var td = document.createElement("td")
-			var pElement = document.createElement("p");
+			var td = document.createElement("td"),
+				pElement = document.createElement("p");
+				
 			td.className = "column"+j;
 			td.appendChild(pElement);
 			tr.appendChild(td);
@@ -67,20 +65,17 @@ function initializeMine(rowLength, columnLength, mineNum, initRow, initColumn){
 	var mineArray = [],
 		mineAround = [],
 		flagMarked = [];
+		
 	var randomMine = function(){
 		var randomRow=Math.floor(rowLength*Math.random());
 		var randomColumn=Math.floor(columnLength*Math.random());
-		if(randomRow>=initRow-1 && randomRow<=initRow+1 && randomColumn>=initColumn-1 && randomColumn<=initColumn-1){
-			arguments.callee();
+		if(mineArray[randomRow][randomColumn]==0){
+			mineArray[randomRow][randomColumn]=1;
 		}else{
-			if(mineArray[randomRow][randomColumn]==0){
-				mineArray[randomRow][randomColumn]=1;
-			}else{
-				arguments.callee();
-			}
+			arguments.callee();
 		}
 	}
-	
+	// 生成空数组
 	for(var i=0; i<rowLength; i++){
 		mineArray.push([]);
 		mineAround.push([]);
