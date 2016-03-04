@@ -5,28 +5,34 @@
 	<title></title>
 	<script src="js/basicFunction.js"></script>
 	<script src="build/jquery.min.js"></script>
+	<link rel="icon" type="image/x-icon" href="favicon.ico"/>
 	<link rel="stylesheet" type="text/css" href="css/reset.css"/>
 	<link rel="stylesheet" type="text/css" href="css/basic.css"/>
 </head>
+
 <body oncontextmenu="return false;">
 	<div class="g-container">
 		<form class="m-form">
 			<input type="radio" name="formation" id="f-low"/>
 			<label for="f-low" class="u-selection">9×9</label>
+			
 			<input type="radio" name="formation" id="f-middle"/>
 			<label for="f-middle" class="u-selection">16×16</label>
+			
 			<input type="radio" name="formation" id="f-high"/>
 			<label for="f-high" class="u-selection">16×30</label>
+			
 			<label id="j-minenum"></label>
 		</form>
 		<table border="1px" cellspacing="0px" cellpadding="0px" id="m-table">
 			<!--<tr class="row0">
-				<td class="column0"></td>
+				<td class="column0"><p></p></td>
 				......
 			</tr>-->
+			<!-- table>tr>td>p -->
 		</table>
 	</div>
 
-	<script src="js/main.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/mainOO.js" type="text/javascript" charset="utf-8"></script>
 </body>
 </html>

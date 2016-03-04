@@ -1,26 +1,26 @@
-p{
+p {
 	width: 30px;
 	height: 30px;
 	font: normal 15px/30px arial;
 	background: #D3D3D3;
 	text-align: center;
 }
-p:hover{
+p:hover {
 	background-color: #808080;	
 }
 
-.g-container{
+.g-container {
 	margin: 50px auto auto auto;
 	width: 1000px;
 }
 /* 设置m-form部分的css属性 */
-.g-container .m-form{
+.g-container .m-form {
 	font: normal 20px/20px "微软雅黑";
 }
-.g-container .m-form .u-selection{
+.g-container .m-form .u-selection {
 	margin-right: 20px;
 }
-.g-container .m-form #j-minenum{
+.g-container .m-form #j-minenum {
 	font: bold 30px/30px "微软雅黑";
 	color: #FF4500;
 }
@@ -28,10 +28,10 @@ p:hover{
 
 
 
-.j-sweeped{
+.j-sweeped {
 	background-color: #FFFFFF;	
 }
-.j-flag{
+.j-flag {
 	background-color: #FF4500;
 }
 
