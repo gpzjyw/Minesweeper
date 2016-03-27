@@ -1,9 +1,12 @@
-# Minesweeper
+# 扫雷
 
----
+## 简介
 
-A game imitated Microsoft Game.
+类windows自带游戏扫雷，三种模式（9x9，16x16，16x30）。
 
-- 3 types of distribution of mines.
-- Distribution of mines is random.
-- Some other characters.
+- 利用事件代理提升了页面性能，通过检测事件对象的属性判断左右键的点击操作；
+- 运用数组定义矩阵，来判断各个方块的状态、是否有雷、周围方块雷的数目；
+
+## 收获
+
+- 开始会将平时的一些想法转化为实际代码，将一些复杂业务逻辑运用JavaScript实现。
